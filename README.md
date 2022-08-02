@@ -1,6 +1,8 @@
 # ManagedBass.SpectrumAnalyzer
 A spectrum analyzer and data provider library for ManagedBass.
 
+[![.NET Core Build](https://github.com/VPKSoft/ManagedBass.SpectrumAnalyzer/actions/workflows/dotnet.yml/badge.svg)](https://github.com/VPKSoft/ManagedBass.SpectrumAnalyzer/actions/workflows/dotnet.yml)
+
 ## ManagedBass.FftSignalProvider
 An assembly to use [ManagedBass](https://github.com/ManagedBass/ManagedBass) to read playback or microphone data with FFT windowing functions.
 
