@@ -1,8 +1,5 @@
 name: .NET ManagedBass.FftSignalProvider Tag Release
 on:
-  push:
-    tags:
-    - 'v*'
   create:
     tags:
     - 'v*'
@@ -21,16 +18,14 @@ jobs:
     steps:
     - name: Checkout main
       uses: actions/checkout@v3
-      with:
-        path: main
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore "$GITHUB_WORKSPACE/../ManagedBass.FftSignalProvider/ManagedBass.FftSignalProvider.csproj"
+      run: dotnet restore "$GITHUB_WORKSPACE/ManagedBass.FftSignalProvider/ManagedBass.FftSignalProvider.csproj"
     - name: Build
-      run: dotnet build --no-restore "$GITHUB_WORKSPACE/../ManagedBass.FftSignalProvider/ManagedBass.FftSignalProvider.csproj"
+      run: dotnet build --no-restore "$GITHUB_WORKSPACE/ManagedBass.FftSignalProvider/ManagedBass.FftSignalProvider.csproj"
     - name: Decode NuGet config
       run: |
         echo -n "$NUGETCONFIG" | base64 --decode > ./nuget.config
