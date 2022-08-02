@@ -2,7 +2,7 @@ name: .NET ManagedBass.FftSignalProvider Tag Release
 on:
   create:
     tags:
-    - 'v*-signal'
+    - '*-signal'
 
 jobs:
   build:
