@@ -19,16 +19,16 @@
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Include="..\icon.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<None Include="..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\ManagedBass.FftSignalProvider\ManagedBass.FftSignalProvider.csproj" />
+		<PackageReference Include="ManagedBass.FftSignalProvider" Version="1.0.0" />
 	</ItemGroup>
 </Project>

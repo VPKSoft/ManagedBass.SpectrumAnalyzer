@@ -42,7 +42,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\EtoForms.SpectrumVisualizer\EtoForms.SpectrumVisualizer.csproj" />
-		<ProjectReference Include="..\ManagedBass.FftSignalProvider\ManagedBass.FftSignalProvider.csproj" />
 	</ItemGroup>
 
 </Project>
