@@ -2,7 +2,7 @@ name: .NET EtoForms.SpectrumVisualizer Tag Release
 on:
   create:
     tags:
-    - 'v*-spectrum'
+    - '*-spectrum'
 
 jobs:
   build:
