@@ -1,0 +1,5 @@
+bass.dll filter=lfs diff=lfs merge=lfs -text
+bassflac.dll filter=lfs diff=lfs merge=lfs -text
+basswma.dll filter=lfs diff=lfs merge=lfs -text
+*.dylib filter=lfs diff=lfs merge=lfs -text
+*.so filter=lfs diff=lfs merge=lfs -text
