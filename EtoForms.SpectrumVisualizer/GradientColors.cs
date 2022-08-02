@@ -48,11 +48,11 @@ public class GradientColors
     /// Gets the gradient start color.
     /// </summary>
     /// <value>The gradient start color.</value>
-    public Color StartColor { get; init; }
+    public Color StartColor { get; }
 
     /// <summary>
     /// Gets the gradient end color.
     /// </summary>
     /// <value>The gradient end color.</value>
-    public Color EndColor { get; init; }
+    public Color EndColor { get; }
 }
