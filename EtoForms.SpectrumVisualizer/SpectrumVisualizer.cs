@@ -314,14 +314,24 @@ public class SpectrumVisualizer : Drawable
     /// </summary>
     public void Stop()
     {
+        var startTime = DateTime.Now;
         signalThreadStopped = true;
         while (!signalUpdateThread?.Join(UpdateFrequency) == false)
         {
-            Application.Instance.RunIteration();
+            if ((DateTime.Now - startTime).TotalSeconds > WaitForThreadSeconds)
+            {
+                return;
+            }
         }
 
         signalUpdateThread = null;
     }
+
+    /// <summary>
+    /// Gets or sets the amount in seconds to wait the spectrum data thread to join.
+    /// </summary>
+    /// <value>The wait time for data thread in seconds.</value>
+    public double WaitForThreadSeconds { get; set; } = 2;
 
     /// <summary>
     /// Gets or sets the color of the background.
