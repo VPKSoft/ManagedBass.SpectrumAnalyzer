@@ -1,0 +1,48 @@
+name: .NET ManagedBass.FftSignalProvider Tag Release
+on:
+  push:
+    tags:
+    - 'v*'
+  create:
+    tags:
+    - 'v*'
+
+jobs:
+  build:
+    environment: NuGet
+    env:
+      NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
+      NUGETAPI: ${{ secrets.NUGETAPI }}      
+      GH_PACKAGES_APIKEY: ${{ secrets.GH_PACKAGES_APIKEY }}
+      PACKAGESAPI: ${{ secrets.PACKAGESAPI }}
+      NUGETCONFIG: ${{ secrets.NUGETCONFIG }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout main
+      uses: actions/checkout@v3
+      with:
+        path: main
+    - name: Checkout fluentui-system-icons
+      uses: actions/checkout@v3  
+      with:
+        repository: microsoft/fluentui-system-icons
+        path: fluentui-system-icons
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore "$GITHUB_WORKSPACE/ManagedBass.FftSignalProvider/ManagedBass.FftSignalProvider.csproj"
+    - name: Build
+      run: dotnet build --no-restore "$GITHUB_WORKSPACE/ManagedBass.FftSignalProvider/ManagedBass.FftSignalProvider.csproj"
+    - name: Decode NuGet config
+      run: |
+        echo -n "$NUGETCONFIG" | base64 --decode > ./nuget.config
+    - name: Push NuGets
+      run: |
+       for f in $(find ./ -name '*ManagedBass.FftSignalProvider*.nupkg')
+       do
+         dotnet nuget push $f -k $GH_PACKAGES_APIKEY -s $PACKAGESAPI --skip-duplicate
+         dotnet nuget push $f -k $NUGET_APIKEY -s $NUGETAPI --skip-duplicate
+       done
