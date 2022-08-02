@@ -1,0 +1,34 @@
+<Project Sdk="Eto.Forms/2.7.0">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Copyright>Copyright © VPKSoft 2022</Copyright>
+		<OutputType>Library</OutputType>
+		<DocumentationFile>bin\$(Configuration)\EtoForms.SpectrumAnalyzer.xml</DocumentationFile>
+		<Company>VPKSoft</Company>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Description>Spectrum analyzer based on ManagedBass.</Description>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Version>1.0.0</Version>
+		<PackageProjectUrl>https://github.com/VPKSoft/ManagedBass.SpectrumAnalyzer</PackageProjectUrl>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/VPKSoft/ManagedBass.SpectrumAnalyzer</RepositoryUrl>
+		<PackageTags>Eto.Forms audio spectrum visualizer control</PackageTags>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Include="..\icon.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ManagedBass.FftSignalProvider\ManagedBass.FftSignalProvider.csproj" />
+	</ItemGroup>
+</Project>
