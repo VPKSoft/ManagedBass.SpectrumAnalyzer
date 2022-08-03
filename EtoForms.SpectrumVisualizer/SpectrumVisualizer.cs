@@ -320,7 +320,7 @@ public class SpectrumVisualizer : Drawable
         {
             if ((DateTime.Now - startTime).TotalSeconds > WaitForThreadSeconds)
             {
-                return;
+                break;
             }
         }
 
