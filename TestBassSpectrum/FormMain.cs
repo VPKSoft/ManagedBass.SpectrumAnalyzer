@@ -60,7 +60,7 @@ internal class FormMain : Form
         playBackHandle = Bass.CreateStream(@"your audio file goes here.mp3");
         Bass.ChannelPlay(playBackHandle);
 
-        spectrumAnalyzer.SignalProvider = new SignalProvider(DataFlags.FFT1024, true, true);
+        spectrumAnalyzer.SignalProvider = new SignalProvider(DataFlags.FFT1024, true, true) { WindowType = WindowType.Hanning, };
         spectrumAnalyzer.SignalProvider.SetChannel(playBackHandle);
     }
 }

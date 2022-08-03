@@ -77,9 +77,8 @@
 		<None Include="BassNative/libbassflac.dylib" />
 	</ItemGroup>
 
-
 	<ItemGroup>
-		<ProjectReference Include="..\EtoForms.SpectrumVisualizer\EtoForms.SpectrumVisualizer.csproj" />
+		<PackageReference Include="EtoForms.SpectrumVisualizer" Version="1.0.3" />
 	</ItemGroup>
 
 </Project>
