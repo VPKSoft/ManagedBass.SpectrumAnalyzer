@@ -10,7 +10,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>Spectrum analyzer based on ManagedBass.</Description>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Version>1.0.2</Version>
+		<Version>1.0.3</Version>
 		<PackageProjectUrl>https://github.com/VPKSoft/ManagedBass.SpectrumAnalyzer</PackageProjectUrl>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -30,6 +30,6 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="ManagedBass.FftSignalProvider" Version="1.0.0" />
+		<PackageReference Include="ManagedBass.FftSignalProvider" Version="1.0.1" />
 	</ItemGroup>
 </Project>
