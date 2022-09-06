@@ -69,8 +69,6 @@ public class SpectrumVisualizer : Drawable
         Paint += SpectrumAnalyzer_Paint;
     }
 
-    private List<ChannelData<double>> channelData = new();
-
     #region Paint
     private void SpectrumAnalyzer_Paint(object? sender, PaintEventArgs e)
     {
@@ -176,6 +174,7 @@ public class SpectrumVisualizer : Drawable
     }
     #endregion
 
+    #region Fields
     private readonly bool multiChannel;
     private int barCount = 64;
     private SpectrumType spectrumType;
@@ -187,7 +186,7 @@ public class SpectrumVisualizer : Drawable
         new GradientColors(Colors.DeepSkyBlue, Colors.LightSkyBlue),
     });
 
-
+    private List<ChannelData<double>> channelData = new();
     private SignalProvider? signalProvider;
     private Thread? signalUpdateThread;
     private volatile bool signalThreadStopped;
@@ -197,7 +196,9 @@ public class SpectrumVisualizer : Drawable
     private volatile int channelHandle;
     private int previousLevelLeft;
     private int previousLevelRight;
+    #endregion
 
+    #region PrivateMethods
     /// <summary>
     /// The signal read thread function.
     /// </summary>
@@ -218,8 +219,8 @@ public class SpectrumVisualizer : Drawable
 
                 if (previousLevelLeft != levelLeft || previousLevelRight != levelRight)
                 {
-                    var leftDouble = (double)levelLeft / short.MaxValue;
-                    var rightDouble = (double)levelRight / short.MaxValue;
+                    var leftDouble = (double)levelLeft / short.MaxValue * 100d;
+                    var rightDouble = (double)levelRight / short.MaxValue * 100d;
                     AudioLevelsChanged?.Invoke(this, new AudioLevelsChangeEventArgs(leftDouble, rightDouble));
                     previousLevelLeft = levelLeft;
                     previousLevelRight = levelRight;
@@ -229,6 +230,7 @@ public class SpectrumVisualizer : Drawable
             Thread.Sleep(UpdateFrequency);
         }
     }
+    #endregion
 
     #region Events
     /// <summary>
@@ -428,9 +430,6 @@ public class SpectrumVisualizer : Drawable
 
         signalUpdateThread = null;
     }
-    #endregion
-
-
 
     /// <summary>
     /// Starts the signal updating for this instance.
@@ -443,4 +442,5 @@ public class SpectrumVisualizer : Drawable
             signalUpdateThread.Start();
         }
     }
+    #endregion
 }
