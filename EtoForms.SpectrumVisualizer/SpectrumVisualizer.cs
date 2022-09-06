@@ -26,6 +26,7 @@ SOFTWARE.
 
 using Eto.Drawing;
 using Eto.Forms;
+using ManagedBass;
 using ManagedBass.FftSignalProvider;
 
 namespace EtoForms.SpectrumVisualizer;
@@ -68,8 +69,7 @@ public class SpectrumVisualizer : Drawable
         Paint += SpectrumAnalyzer_Paint;
     }
 
-    private List<ChannelData<double>> channelData = new();
-
+    #region Paint
     private void SpectrumAnalyzer_Paint(object? sender, PaintEventArgs e)
     {
         if (spectrumType == SpectrumType.Bar)
@@ -172,7 +172,9 @@ public class SpectrumVisualizer : Drawable
             graphics.FillRectangle(brush, barRectangle);
         }
     }
+    #endregion
 
+    #region Fields
     private readonly bool multiChannel;
     private int barCount = 64;
     private SpectrumType spectrumType;
@@ -184,12 +186,60 @@ public class SpectrumVisualizer : Drawable
         new GradientColors(Colors.DeepSkyBlue, Colors.LightSkyBlue),
     });
 
-
+    private List<ChannelData<double>> channelData = new();
     private SignalProvider? signalProvider;
     private Thread? signalUpdateThread;
     private volatile bool signalThreadStopped;
     private int barSpan = 2;
+    private bool useGradientColorsOnBars = true;
+    private volatile bool raiseAudioLevelsChanged;
+    private volatile int channelHandle;
+    private int previousLevelLeft;
+    private int previousLevelRight;
+    #endregion
 
+    #region PrivateMethods
+    /// <summary>
+    /// The signal read thread function.
+    /// </summary>
+    private async void SignalThreadFunc()
+    {
+        while (!signalThreadStopped)
+        {
+            if (signalProvider != null)
+            {
+                channelData = signalProvider.DataSampleWindowed;
+                await Application.Instance.InvokeAsync(Invalidate);
+            }
+
+            if (raiseAudioLevelsChanged)
+            {
+                var levelLeft = Bass.ChannelGetLevelLeft(channelHandle);
+                var levelRight = Bass.ChannelGetLevelRight(channelHandle);
+
+                if (previousLevelLeft != levelLeft || previousLevelRight != levelRight)
+                {
+                    var leftDouble = (double)levelLeft / short.MaxValue * 100d;
+                    var rightDouble = (double)levelRight / short.MaxValue * 100d;
+                    AudioLevelsChanged?.Invoke(this, new AudioLevelsChangeEventArgs(leftDouble, rightDouble));
+                    previousLevelLeft = levelLeft;
+                    previousLevelRight = levelRight;
+                }
+            }
+
+            Thread.Sleep(UpdateFrequency);
+        }
+    }
+    #endregion
+
+    #region Events
+    /// <summary>
+    /// Occurs when audio levels (peak amplitudes) changed.
+    /// </summary>
+    public event EventHandler<AudioLevelsChangeEventArgs>? AudioLevelsChanged;
+    #endregion
+
+    #region PublicProperties
     /// <summary>
     /// Gets or sets the signal provider providing the audio data to visualize.
     /// </summary>
@@ -210,23 +260,6 @@ public class SpectrumVisualizer : Drawable
             {
                 Start();
             }
-        }
-    }
-
-    /// <summary>
-    /// The signal read thread function.
-    /// </summary>
-    private async void SignalThreadFunc()
-    {
-        while (!signalThreadStopped)
-        {
-            if (signalProvider != null)
-            {
-                channelData = signalProvider.DataSampleWindowed;
-                await Application.Instance.InvokeAsync(Invalidate);
-            }
-
-            Thread.Sleep(UpdateFrequency);
         }
     }
 
@@ -310,24 +343,6 @@ public class SpectrumVisualizer : Drawable
     }
 
     /// <summary>
-    /// Stops the signal updating for this instance.
-    /// </summary>
-    public void Stop()
-    {
-        var startTime = DateTime.Now;
-        signalThreadStopped = true;
-        while (!signalUpdateThread?.Join(UpdateFrequency) == false)
-        {
-            if ((DateTime.Now - startTime).TotalSeconds > WaitForThreadSeconds)
-            {
-                break;
-            }
-        }
-
-        signalUpdateThread = null;
-    }
-
-    /// <summary>
     /// Gets or sets the amount in seconds to wait the spectrum data thread to join.
     /// </summary>
     /// <value>The wait time for data thread in seconds.</value>
@@ -353,8 +368,6 @@ public class SpectrumVisualizer : Drawable
         }
     }
 
-    private bool useGradientColorsOnBars = true;
-
     /// <summary>
     /// Gets or sets a value indicating whether use gradient colors when <see cref="SpectrumType"/> = <see cref="EtoForms.SpectrumVisualizer.SpectrumType.Bar"/>.
     /// </summary>
@@ -374,6 +387,51 @@ public class SpectrumVisualizer : Drawable
     }
 
     /// <summary>
+    /// Gets or sets a value indicating whether raise the <see cref="AudioLevelsChanged"/> event.
+    /// </summary>
+    /// <value><c>true</c> if to raise the <see cref="raiseAudioLevelsChanged"/> event; otherwise, <c>false</c>.</value>
+    public bool RaiseAudioLevelsChanged
+    {
+        get => raiseAudioLevelsChanged;
+
+        set => raiseAudioLevelsChanged = value;
+    }
+    #endregion
+
+    #region PublicMethods    
+    /// <summary>
+    /// Sets the current audio channel.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    public void SetChannel(int channel)
+    {
+        SignalProvider?.SetChannel(channel);
+        channelHandle = channel;
+    }
+
+    /// <summary>
+    /// Stops the signal updating for this instance.
+    /// </summary>
+    public void Stop()
+    {
+        var startTime = DateTime.Now;
+        signalThreadStopped = true;
+
+        if (signalUpdateThread != null)
+        {
+            while (!signalUpdateThread.Join(UpdateFrequency))
+            {
+                if ((DateTime.Now - startTime).TotalSeconds > WaitForThreadSeconds)
+                {
+                    break;
+                }
+            }
+        }
+
+        signalUpdateThread = null;
+    }
+
+    /// <summary>
     /// Starts the signal updating for this instance.
     /// </summary>
     public void Start()
@@ -384,4 +442,5 @@ public class SpectrumVisualizer : Drawable
             signalUpdateThread.Start();
         }
     }
+    #endregion
 }
