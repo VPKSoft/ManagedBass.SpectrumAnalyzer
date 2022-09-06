@@ -78,7 +78,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="EtoForms.SpectrumVisualizer" Version="1.0.3" />
+		<PackageReference Include="EtoForms.SpectrumVisualizer" Version="1.0.5" />
 	</ItemGroup>
 
 </Project>

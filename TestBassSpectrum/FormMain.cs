@@ -24,6 +24,7 @@ SOFTWARE.
 */
 #endregion
 
+using System.Diagnostics;
 using Eto.Drawing;
 using Eto.Forms;
 using EtoForms.SpectrumVisualizer;
@@ -41,13 +42,32 @@ internal class FormMain : Form
 
         Shown += FormMain_Shown;
 
+        spectrumAnalyzer.AudioLevelsChanged += SpectrumAnalyzer_AudioLevelsChanged;
+        spectrumAnalyzer.RaiseAudioLevelsChanged = true;
+
         Content = new TableLayout
         {
             Rows =
             {
-                new TableRow(new TableCell(spectrumAnalyzer, true)) { ScaleHeight = true, },
+                new TableRow { Cells =
+                {
+                    new TableCell(spectrumAnalyzer, true),
+                },
+                ScaleHeight = true, },
+                new TableRow(new TableCell(levelLeftBar)) { ScaleHeight = false,},
+                new TableRow(new TableCell(levelRightBar)) { ScaleHeight = false,},
             },
         };
+    }
+
+    private async void SpectrumAnalyzer_AudioLevelsChanged(object? sender, AudioLevelsChangeEventArgs e)
+    {
+        await Application.Instance.InvokeAsync(() =>
+        {
+            levelLeftBar.Value = (int)e.LevelLeftChannel;
+            levelRightBar.Value = (int)e.LevelRightChannel;
+        });
+        Debug.WriteLine($"Level left: {e.LevelLeftChannel:F1}, Level right: {e.LevelRightChannel:F1}");
     }
 
     private int playBackHandle;
@@ -55,12 +75,15 @@ internal class FormMain : Form
     private readonly SpectrumVisualizer spectrumAnalyzer = new(true)
     { Width = 300, Height = 150, SpectrumType = SpectrumType.Bar, BackgroundColor = Colors.Black, };
 
+    private readonly ProgressBar levelLeftBar = new() { Height = 20, Value = 100, };
+    private readonly ProgressBar levelRightBar = new() { Height = 20, Value = 100, };
+
     private void FormMain_Shown(object? sender, EventArgs e)
     {
         playBackHandle = Bass.CreateStream(@"your audio file goes here.mp3");
         Bass.ChannelPlay(playBackHandle);
 
         spectrumAnalyzer.SignalProvider = new SignalProvider(DataFlags.FFT1024, true, true) { WindowType = WindowType.Hanning, };
-        spectrumAnalyzer.SignalProvider.SetChannel(playBackHandle);
+        spectrumAnalyzer.SetChannel(playBackHandle);
     }
 }
